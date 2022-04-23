@@ -1,0 +1,14 @@
+Index: src/unconstrained_min.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>print(\"Yuval\")\nprint(\"\")
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/unconstrained_min.py b/src/unconstrained_min.py
+--- a/src/unconstrained_min.py	(revision ed2e66e4e81769359d3f55e0026958604867a3bc)
++++ b/src/unconstrained_min.py	(date 1650381704761)
+@@ -1,2 +1,0 @@
+-print("Yuval")
+-print("")
+\ No newline at end of file

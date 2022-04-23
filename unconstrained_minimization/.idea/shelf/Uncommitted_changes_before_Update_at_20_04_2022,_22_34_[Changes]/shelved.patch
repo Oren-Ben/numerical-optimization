@@ -1,0 +1,31 @@
+Index: src/unconstrained_min.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import numpy as np\nfrom tests.examples import *\n\n# def inverse_calculation(matrix):\n#     return np.linalg.solve(matrix, np.eye(matrix.shape[0]))\n\ndef termination_flag(x_next, x_prev, f_next,f_prev, obj_tol, param_tol):\n    \"\"\"\n    :return: False - continue to search, True - stop searching.\n    \"\"\"\n    diff_obj = np.linalg.norm(x_prev - x_next)\n    diff_param = f_prev - f_next\n    return diff_obj<=obj_tol or diff_param<=param_tol\n\ndef wolfe_step_len(x,f,method,f_val,g_val, h_val,wolfe_slope_const=0.01,backtrack_const=0.5):\n    init_step = 1\n    if method =='GD':\n        pk = -g_val\n    elif method == 'NT':\n        # need to change the implementation of the linalg.solve:\n        pk = np.linalg.solve(h_val,-g_val)\n    while f(x+init_step*pk)[0]>f_val+wolfe_slope_const*g_val.T.dot(pk)*init_step:\n        init_step*=backtrack_const\n    return init_step\n\n# adding to the minimizer function the parameter \"method\" in according to Yonathan response on piazza.\ndef minimizer(f, x0,method, step_len, obj_tol, param_tol, max_iter):\n\n    if type(step_len) == str:\n        if step_len.lower() == 'wolfe':\n            f_val, g_val,h_val = f(x0,eval_hessian=True)\n            step_len = wolfe_step_len(x0,f,method,f_val=f_val,g_val=g_val,h_val=h_val)\n\n    # our code\n    x_prev = x0\n    f_prev, g_prev, h_prev = f(x0, eval_hessian=True)\n    i = 0\n    print(i, x_prev, f_prev)\n    success = False\n    path_x1_list =[]\n    path_x2_list=[]\n    path_obj_func_list = []\n    iteration_report_dict = {}\n    path_x1_list.append(x_prev[0])\n    path_x2_list.append(x_prev[1])\n    path_obj_func_list.append(f_prev)\n    if method == 'GD':\n        # x - the points, will change in each iteration until reaches the flag termination.\n        # f(x)[1] - will have the gradienet\n        # Check if the termination rule exist?\n        # report the postion: i, x[i], f[x[i]] (We should save only x[i] and f[x[i]])\n        # at the end final location and success/failure.\n        while not success and i<=max_iter:\n            x_next = x_prev - step_len*g_prev\n            f_next, g_next = f(x_next)\n            i+=1\n            path_x1_list.append(x_next[0])\n            path_x2_list.append(x_next[1])\n            path_obj_func_list.append(f_next)\n            print(i,x_next,f_next)\n            success = termination_flag(x_next,x_prev,f_next,f_prev,obj_tol,param_tol)\n            print(success)\n            if not success:\n                x_prev, f_prev, g_prev = x_next, f_next, g_next\n        # Think in the future if we should add it in the return: iteration_report_dict[i],\n        return path_x1_list,path_x2_list,path_obj_func_list, success\n\n    elif method == 'NT':\n        while not success and i <= max_iter:\n            #search_dir = -inverse_calculation(h_prev).dot(g_prev)\n            search_dir = np.linalg.solve(h_prev,-g_prev)\n            x_next = x_prev- step_len*search_dir\n            f_next, g_next, h_next = f(x_next, eval_hessian=True)\n            i += 1\n            path_x1_list.append(x_next[0])\n            path_x2_list.append(x_next[1])\n            path_obj_func_list.append(f_next)\n            print(i, x_next, f_next)\n            success = termination_flag(x_next, x_prev, f_next, f_prev, obj_tol, param_tol)\n            print(success)\n            if not success:\n                x_prev, f_prev, g_prev, h_prev= x_next, f_next, g_next, h_next\n\n        return path_x1_list,path_x2_list,path_obj_func_list, success\n\n    else:\n        print(\"You inserted wrong number please try again\")\n\n#x = np.array((1, 1))\n#f = x[0] + x[1]\nx0 = np.array([1,1]).T\nx0_rosenbrock = np.array([-1,2]).T\n#print(x.shape)\npath_x1_list,path_x2_list,path_obj_func_list, success= minimizer(rosenbrock_func, x0_rosenbrock,'GD', 'Wolfe', 1e-12, 1e-8, 100)\n\n#print(rosenbrock_func(x0_rosenbrock, True))\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/unconstrained_min.py b/src/unconstrained_min.py
+--- a/src/unconstrained_min.py	
++++ b/src/unconstrained_min.py	
+@@ -86,11 +86,13 @@
+     else:
+         print("You inserted wrong number please try again")
+ 
+-#x = np.array((1, 1))
+-#f = x[0] + x[1]
+-x0 = np.array([1,1]).T
+-x0_rosenbrock = np.array([-1,2]).T
+-#print(x.shape)
+-path_x1_list,path_x2_list,path_obj_func_list, success= minimizer(rosenbrock_func, x0_rosenbrock,'GD', 'Wolfe', 1e-12, 1e-8, 100)
++
++if __name__ == '__main__':
++    #x = np.array((1, 1))
++    #f = x[0] + x[1]
++    x0 = np.array([1,1]).T
++    x0_rosenbrock = np.array([-1,2]).T
++    #print(x.shape)
++    path_x1_list,path_x2_list,path_obj_func_list, success= minimizer(rosenbrock_func, x0_rosenbrock,'GD', 'Wolfe', 1e-12, 1e-8, 100)
+ 
+-#print(rosenbrock_func(x0_rosenbrock, True))
++    #print(rosenbrock_func(x0_rosenbrock, True))

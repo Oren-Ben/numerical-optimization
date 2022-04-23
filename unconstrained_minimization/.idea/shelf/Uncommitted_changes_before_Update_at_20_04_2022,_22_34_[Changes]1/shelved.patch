@@ -1,0 +1,22 @@
+Index: tests/test_unconstrained_min.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/test_unconstrained_min.py b/tests/test_unconstrained_min.py
+--- a/tests/test_unconstrained_min.py	
++++ b/tests/test_unconstrained_min.py	
+@@ -1,0 +1,12 @@
++import unittest
++import src.unconstrained_min
++import examples
++import numpy as np
++
++class TestUnconstrained(unittest.TestCase):
++
++    def test_f1(self):
++        x0_rosenbrock = np.array([-1, 2]).T
++        result = src.unconstrained_min.minimizer(examples.rosenbrock_func, x0_rosenbrock,'GD', 'Wolfe', 1e-12, 1e-8, 100)
++
++unittest.main()
+\ No newline at end of file
