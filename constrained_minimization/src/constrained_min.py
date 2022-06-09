@@ -43,9 +43,7 @@ def interior_pt(func, ineq_constraints, eq_constraints_mat, eq_constraints_rhs, 
     # Check if there are equality constraints:
     A, b = eq_constraints_mat, eq_constraints_rhs
 
-    # constants variables:
-    # wolfe_slope_const=0.5
-    # backtrack_const = 0.9
+
     wolfe_slope_const = 0.01
     backtrack_const = 0.5
     obj_tol = 1e-12
